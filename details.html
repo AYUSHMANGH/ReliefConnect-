@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Center Details - ReliefConnect</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .details-container {
+            max-width: 800px;
+            margin: 4rem auto;
+            background-color: var(--gray-800);
+            border-radius: 1rem;
+            border-top: 4px solid var(--emergency-orange);
+            padding: 3rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #374151;
+        }
+
+        .center-title {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--clean-white);
+        }
+
+        .center-meta {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .tag-category { background-color: var(--trust-blue); color: var(--clean-white); }
+        .tag-stock-high { background-color: var(--success-green); color: var(--darker-bg); }
+        .tag-stock-medium { background-color: var(--emergency-orange); color: var(--darker-bg); }
+        .tag-stock-low { background-color: var(--danger-red); color: var(--clean-white); }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .info-group h4 {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-group p {
+            font-size: 1.125rem;
+            color: var(--clean-white);
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        #error-state {
+            text-align: center;
+            padding: 4rem 0;
+            display: none;
+        }
+
+        #loading-state {
+            padding: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- Loading Skeleton -->
+            <div id="loading-state" class="details-container">
+                <div class="skeleton" style="height: 40px; width: 60%; margin-bottom: 1rem;"></div>
+                <div class="skeleton" style="height: 20px; width: 30%; margin-bottom: 2rem;"></div>
+                <div class="skeleton" style="height: 100px; width: 100%;"></div>
+            </div>
+
+            <!-- Error State -->
+            <div id="error-state">
+                <h2 style="margin-bottom: 1rem; color: var(--danger-red);">Center Not Found</h2>
+                <p style="margin-bottom: 2rem; color: var(--text-muted);">The requested resource center could not be located or may have been removed.</p>
+                <a href="explore.html" class="btn btn-primary">Return to Map</a>
+            </div>
+
+            <!-- Content State -->
+            <div id="content-state" class="details-container" style="display: none;">
+                <div class="header-section">
+                    <div>
+                        <h1 class="center-title" id="d-name">Center Name</h1>
+                        <div class="center-meta">
+                            <span class="tag tag-category" id="d-category">Category</span>
+                            <span class="tag" id="d-stock">Stock Level</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-group">
+                        <h4>Contact Number</h4>
+                        <p id="d-contact">Loading...</p>
+                    </div>
+                    <div class="info-group">
+                        <h4>Address</h4>
+                        <p id="d-address">Loading...</p>
+                    </div>
+                    <div class="info-group">
+                        <h4>Coordinates</h4>
+                        <p id="d-coords">Loading...</p>
+                    </div>
+                    <div class="info-group">
+                        <h4>Status</h4>
+                        <p style="color: var(--success-green); font-weight: 600;">Active & Verified</p>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <a href="#" id="btn-directions" class="btn btn-primary" target="_blank">Get Directions</a>
+                    <a href="explore.html" class="btn btn-outline">Back to Map</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const centerId = urlParams.get('id');
+
+            setTimeout(() => {
+                document.getElementById('loading-state').style.display = 'none';
+
+                if (!centerId) {
+                    document.getElementById('error-state').style.display = 'block';
+                    return;
+                }
+
+                const center = window.getCenterById(centerId);
+
+                if (!center) {
+                    document.getElementById('error-state').style.display = 'block';
+                    return;
+                }
+
+                // Populate Data
+                document.getElementById('content-state').style.display = 'block';
+                document.getElementById('d-name').textContent = center.name;
+                document.getElementById('d-category').textContent = center.category;
+                
+                const stockEl = document.getElementById('d-stock');
+                stockEl.textContent = `${center.stock} Stock`;
+                stockEl.className = `tag tag-stock-${center.stock.toLowerCase()}`;
+
+                document.getElementById('d-contact').textContent = center.contact;
+                document.getElementById('d-address').textContent = center.address || 'N/A';
+                document.getElementById('d-coords').textContent = `${center.lat}, ${center.lng}`;
+
+                // Set Maps Link
+                const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${center.lat},${center.lng}`;
+                document.getElementById('btn-directions').href = mapsUrl;
+
+            }, 500); // Simulate load time
+        });
+    </script>
+</body>
+</html>

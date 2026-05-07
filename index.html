@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReliefConnect - Emergency Resource Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Home Specific Styles */
+        .hero {
+            padding: 6rem 0;
+            text-align: center;
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            border-bottom: 1px solid var(--gray-800);
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--clean-white);
+        }
+        
+        .hero-title span {
+            color: var(--emergency-orange);
+        }
+        
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 3rem auto;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        .stats-section {
+            padding: 4rem 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-card {
+            background-color: var(--gray-800);
+            padding: 2rem;
+            border-radius: 1rem;
+            border-top: 4px solid var(--trust-blue);
+        }
+
+        .stat-card:nth-child(2) { border-top-color: var(--emergency-orange); }
+        .stat-card:nth-child(3) { border-top-color: var(--success-green); }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--clean-white);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Placeholder -->
+    <div id="header-placeholder"></div>
+
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h1 class="hero-title">Mission Critical <span>Resource</span> Coordination</h1>
+                <p class="hero-subtitle">Real-time mapping and management of emergency relief centers. Find what you need, or list available resources to help the community.</p>
+                <div class="hero-actions">
+                    <a href="explore.html" class="btn btn-primary">Find Help Now</a>
+                    <a href="contribute.html" class="btn btn-outline">List a Center</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Stats Section -->
+        <section class="stats-section">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number counter" data-target="142">0</div>
+                        <div class="stat-label">Active Centers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number counter" data-target="89">0</div>
+                        <div class="stat-label">Critical Requests</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number counter" data-target="12500">0</div>
+                        <div class="stat-label">People Assisted</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Placeholder -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+    <script>
+        // Simple counter animation
+        document.addEventListener('DOMContentLoaded', () => {
+            const counters = document.querySelectorAll('.counter');
+            const speed = 200;
+
+            counters.forEach(counter => {
+                const updateCount = () => {
+                    const target = +counter.getAttribute('data-target');
+                    const count = +counter.innerText;
+                    const inc = target / speed;
+
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count + inc);
+                        setTimeout(updateCount, 15);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+                setTimeout(updateCount, 500); // slight delay for effect
+            });
+        });
+    </script>
+</body>
+</html>

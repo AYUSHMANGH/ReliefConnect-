@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contribute - ReliefConnect</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 4rem auto;
+            background-color: var(--gray-800);
+            border-radius: 1rem;
+            padding: 3rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border-top: 4px solid var(--trust-blue);
+        }
+
+        .form-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .form-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-header p {
+            color: var(--text-muted);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .form-row > .form-group {
+            flex: 1;
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem top 50%;
+            background-size: 0.65rem auto;
+        }
+
+        .btn-submit {
+            width: 100%;
+            margin-top: 1rem;
+            font-size: 1.125rem;
+        }
+        
+        .location-hint {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="form-container">
+                <div class="form-header">
+                    <h1>Report a Center</h1>
+                    <p>Add a new collection or distribution center to the live map.</p>
+                </div>
+
+                <form id="contribution-form">
+                    <div class="form-group">
+                        <label class="form-label" for="name">Center Name</label>
+                        <input type="text" id="name" class="form-control" required placeholder="e.g. Downtown Relief Shelter">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="category">Resource Type</label>
+                            <select id="category" class="form-control" required>
+                                <option value="Food">Food & Water</option>
+                                <option value="Medicine">Medical Supplies</option>
+                                <option value="Oxygen">Oxygen Cylinders</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="stock">Initial Stock Level</label>
+                            <select id="stock" class="form-control" required>
+                                <option value="High">High (Well Stocked)</option>
+                                <option value="Medium">Medium (Accepting Donations)</option>
+                                <option value="Low">Low (Critical Need)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="contact">Contact Number</label>
+                        <input type="tel" id="contact" class="form-control" required placeholder="e.g. 555-0199">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="address">Street Address</label>
+                        <input type="text" id="address" class="form-control" required placeholder="Full physical address">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="lat">Latitude</label>
+                            <input type="number" step="any" id="lat" class="form-control" required placeholder="37.7749">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="lng">Longitude</label>
+                            <input type="number" step="any" id="lng" class="form-control" required placeholder="-122.4194">
+                        </div>
+                    </div>
+                    <span class="location-hint" style="margin-top: -1rem; margin-bottom: 1.5rem;">For demo purposes, enter coordinates near SF (e.g. 37.7..., -122.4...) to see it on the map.</span>
+
+                    <button type="submit" class="btn btn-primary btn-submit">Submit Center to Live Map</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('contribution-form');
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const newCenter = {
+                    name: document.getElementById('name').value,
+                    category: document.getElementById('category').value,
+                    stock: document.getElementById('stock').value,
+                    contact: document.getElementById('contact').value,
+                    address: document.getElementById('address').value,
+                    lat: parseFloat(document.getElementById('lat').value),
+                    lng: parseFloat(document.getElementById('lng').value)
+                };
+
+                // Save to localStorage via global helper
+                const savedCenter = window.addCenter(newCenter);
+
+                // Show Toast Notification
+                window.showToast('Success! Center added to the Live Map.', 'success');
+
+                // Reset Form
+                form.reset();
+
+                // Optional: Redirect to details or map after a delay
+                setTimeout(() => {
+                    window.location.href = `details.html?id=${savedCenter.id}`;
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>
